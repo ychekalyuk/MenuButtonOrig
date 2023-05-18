@@ -29,6 +29,11 @@ class MainViewController: UIViewController {
         let button = UIButton()
         let buttonImage = UIImage(named: "menuButton")
         button.setImage(buttonImage, for: .normal)
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.4
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowRadius = 30
+        button.layer.masksToBounds = false
         return button
     }()
     
@@ -38,22 +43,37 @@ class MainViewController: UIViewController {
         let buttonImage = UIImage(named: "menuButton")
         button.setImage(buttonImage, for: .normal)
         button.alpha = 0
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.4
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowRadius = 10
+        button.layer.masksToBounds = false
         return button
     }()
+    
     private lazy var sendButton: UIButton = {
         let button = UIButton()
         let buttonImage = UIImage(named: "menuButton")
         button.setImage(buttonImage, for: .normal)
         button.alpha = 0
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.4
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowRadius = 10
+        button.layer.masksToBounds = false
         return button
     }()
-    
     
     private lazy var recieveButton: UIButton = {
         let button = UIButton()
         let buttonImage = UIImage(named: "menuButton")
         button.setImage(buttonImage, for: .normal)
         button.alpha = 0
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.4
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowRadius = 10
+        button.layer.masksToBounds = false
         return button
     }()
     
@@ -62,33 +82,45 @@ class MainViewController: UIViewController {
         let buttonImage = UIImage(named: "menuButton")
         button.setImage(buttonImage, for: .normal)
         button.alpha = 0
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.4
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowRadius = 10
+        button.layer.masksToBounds = false
         return button
     }()
+    
     private lazy var borrowButton: UIButton = {
         let button = UIButton()
         let buttonImage = UIImage(named: "menuButton")
         button.setImage(buttonImage, for: .normal)
         button.alpha = 0
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.4
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        button.layer.shadowRadius = 10
+        button.layer.masksToBounds = false
         return button
     }()
+    
     //MARK: - Constraints
     
     private lazy var stakeButtonLeftConstraint = stakeButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: centerX)
     private lazy var stakeButtonBottomConstraint = stakeButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,
-                                                                                       constant: -50)
+                                                                                       constant: -30)
     private lazy var sendButtonLeftConstraint = sendButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: centerX)
-    private lazy var sendButtonBottomConstraint = sendButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50)
+    private lazy var sendButtonBottomConstraint = sendButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30)
     
     private lazy var recieveButtonBottomConstraint = recieveButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,
-                                                                                           constant: -50)
+                                                                                           constant: -30)
     private lazy var supplyButtonRightConstraint = supplyButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -centerX)
-    private lazy var supplyButtonBottomConstraint = supplyButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50)
+    private lazy var supplyButtonBottomConstraint = supplyButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30)
     private lazy var borrowButtonRightConstraint = borrowButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -centerX)
-    private lazy var borrowButtonBottomConstraint = borrowButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50)
+    private lazy var borrowButtonBottomConstraint = borrowButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30)
     
     //MARK: - Private Properties
     private let centerX = UIScreen.main.bounds.width / 2
-    private var isMenuButtonExpanded = false
+    private var isButtonsAppeared = false
     
     //MARK: - Lifecycle Methods
     override func viewDidLoad() {
@@ -102,7 +134,7 @@ class MainViewController: UIViewController {
 private extension MainViewController {
     func setupRecognizers() {
         menuButton.addTarget(self, action: #selector(menuButtonTapped), for: .touchUpInside)
-        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(buttonLongPressed(_:)))
+        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(menuButtonLongPressed(_:)))
         longPressGesture.minimumPressDuration = 0.2
         menuButton.addGestureRecognizer(longPressGesture)
     }
@@ -131,27 +163,27 @@ private extension MainViewController {
         }
     }
     @objc func menuButtonTapped() {
-        isMenuButtonExpanded.toggle()
-        if isMenuButtonExpanded {
-            UIView.animate(withDuration: 0.1) {
-                self.setupButtons(isMenuButtonExpanded: self.isMenuButtonExpanded)
+        isButtonsAppeared.toggle()
+        if isButtonsAppeared {
+            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.3) {
+                self.setupButtons(isMenuButtonExpanded: self.isButtonsAppeared)
                 self.menuButton.alpha = 1
             }
             let expandedButtonImage = UIImage(named: "menuButtonShadow")
             menuButton.setImage(expandedButtonImage, for: .normal)
         } else {
-            UIView.animate(withDuration: 0.1) {
-                self.setupButtons(isMenuButtonExpanded: self.isMenuButtonExpanded)
+            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.3) {
+                self.setupButtons(isMenuButtonExpanded: self.isButtonsAppeared)
             }
             let normalButtonImage = UIImage(named: "menuButton")
             menuButton.setImage(normalButtonImage, for: .normal)
         }
     }
     
-    @objc func buttonLongPressed(_ sender: UILongPressGestureRecognizer) {
+    @objc func menuButtonLongPressed(_ sender: UILongPressGestureRecognizer) {
         switch sender.state {
         case .began:
-            UIView.animate(withDuration: 0.1) {
+            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.3) {
                 UIImpactFeedbackGenerator(style: .heavy).impactOccurred(intensity: 1)
                 self.setupButtons(isMenuButtonExpanded: true)
             }
@@ -159,7 +191,7 @@ private extension MainViewController {
                 self.menuButton.alpha = 0
             }
         case .ended:
-            UIView.animate(withDuration: 0.1) {
+            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.3) {
                 self.setupButtons(isMenuButtonExpanded: false)
                 
             }
@@ -173,24 +205,24 @@ private extension MainViewController {
     
     private func setupButtonsDynamicConstraints(isBegan: Bool) {
         if isBegan {
-            stakeButtonBottomConstraint.constant = -120
+            stakeButtonBottomConstraint.constant = -90
             stakeButtonLeftConstraint.constant = 24
-            sendButtonBottomConstraint.constant = -140
+            sendButtonBottomConstraint.constant = -110
             sendButtonLeftConstraint.constant = 100
-            recieveButtonBottomConstraint.constant = -150
-            supplyButtonBottomConstraint.constant = -140
+            recieveButtonBottomConstraint.constant = -120
+            supplyButtonBottomConstraint.constant = -110
             supplyButtonRightConstraint.constant = -100
-            borrowButtonBottomConstraint.constant = -120
+            borrowButtonBottomConstraint.constant = -90
             borrowButtonRightConstraint.constant = -24
         } else {
-            stakeButtonBottomConstraint.constant = -50
+            stakeButtonBottomConstraint.constant = -30
             stakeButtonLeftConstraint.constant = centerX
-            sendButtonBottomConstraint.constant = -50
+            sendButtonBottomConstraint.constant = -30
             sendButtonLeftConstraint.constant = centerX
-            recieveButtonBottomConstraint.constant = -50
-            supplyButtonBottomConstraint.constant = -50
+            recieveButtonBottomConstraint.constant = -30
+            supplyButtonBottomConstraint.constant = -30
             supplyButtonRightConstraint.constant = -centerX
-            borrowButtonBottomConstraint.constant = -50
+            borrowButtonBottomConstraint.constant = -30
             borrowButtonRightConstraint.constant = -centerX
         }
         
@@ -238,7 +270,7 @@ private extension MainViewController {
             translucentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             menuButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            menuButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -60),
+            menuButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30),
             menuButton.heightAnchor.constraint(equalToConstant: 80),
             menuButton.widthAnchor.constraint(equalToConstant: 80),
             
