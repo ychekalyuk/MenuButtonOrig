@@ -87,7 +87,8 @@ class MainViewController: UIViewController {
     private lazy var borrowButtonBottomConstraint = borrowButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50)
     
     //MARK: - Private Properties
-    let centerX = UIScreen.main.bounds.width / 2
+    private let centerX = UIScreen.main.bounds.width / 2
+    private var isMenuButtonExpanded = false
     
     //MARK: - Lifecycle Methods
     override func viewDidLoad() {
@@ -100,6 +101,7 @@ class MainViewController: UIViewController {
 //MARK: - Setup Gesture Recognizers
 private extension MainViewController {
     func setupRecognizers() {
+        menuButton.addTarget(self, action: #selector(menuButtonTapped), for: .touchUpInside)
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(buttonLongPressed(_:)))
         longPressGesture.minimumPressDuration = 0.2
         menuButton.addGestureRecognizer(longPressGesture)
@@ -108,33 +110,57 @@ private extension MainViewController {
 
 //MARK: - Actions
 private extension MainViewController {
+    func setupButtons(isMenuButtonExpanded: Bool) {
+        if isMenuButtonExpanded {
+            UIImpactFeedbackGenerator(style: .heavy).impactOccurred(intensity: 1)
+            self.translucentView.alpha = 1
+            self.stakeButton.alpha = 1
+            self.sendButton.alpha = 1
+            self.recieveButton.alpha = 1
+            self.supplyButton.alpha = 1
+            self.borrowButton.alpha = 1
+            self.setupButtonsDynamicConstraints(isBegan: true)
+        } else {
+            self.translucentView.alpha = 0
+            self.setupButtonsDynamicConstraints(isBegan: false)
+            self.stakeButton.alpha = 0
+            self.sendButton.alpha = 0
+            self.recieveButton.alpha = 0
+            self.supplyButton.alpha = 0
+            self.borrowButton.alpha = 0
+        }
+    }
+    @objc func menuButtonTapped() {
+        isMenuButtonExpanded.toggle()
+        if isMenuButtonExpanded {
+            UIView.animate(withDuration: 0.1) {
+                self.setupButtons(isMenuButtonExpanded: self.isMenuButtonExpanded)
+                self.menuButton.alpha = 1
+            }
+            let expandedButtonImage = UIImage(named: "menuButtonShadow")
+            menuButton.setImage(expandedButtonImage, for: .normal)
+        } else {
+            UIView.animate(withDuration: 0.1) {
+                self.setupButtons(isMenuButtonExpanded: self.isMenuButtonExpanded)
+            }
+            let normalButtonImage = UIImage(named: "menuButton")
+            menuButton.setImage(normalButtonImage, for: .normal)
+        }
+    }
+    
     @objc func buttonLongPressed(_ sender: UILongPressGestureRecognizer) {
         switch sender.state {
-            
         case .began:
             UIView.animate(withDuration: 0.1) {
                 UIImpactFeedbackGenerator(style: .heavy).impactOccurred(intensity: 1)
-                self.translucentView.alpha = 1
-                self.stakeButton.alpha = 1
-                self.sendButton.alpha = 1
-                self.recieveButton.alpha = 1
-                self.supplyButton.alpha = 1
-                self.borrowButton.alpha = 1
-                self.setupButtonsDynamicConstraints(isBegan: true)
+                self.setupButtons(isMenuButtonExpanded: true)
             }
             UIView.animate(withDuration: 0.2) {
                 self.menuButton.alpha = 0
             }
         case .ended:
             UIView.animate(withDuration: 0.1) {
-                self.translucentView.alpha = 0
-                self.menuButton.alpha = 1
-                self.setupButtonsDynamicConstraints(isBegan: false)
-                self.stakeButton.alpha = 0
-                self.sendButton.alpha = 0
-                self.recieveButton.alpha = 0
-                self.supplyButton.alpha = 0
-                self.borrowButton.alpha = 0
+                self.setupButtons(isMenuButtonExpanded: false)
                 
             }
             UIView.animate(withDuration: 0.2) {
@@ -215,7 +241,7 @@ private extension MainViewController {
             menuButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -60),
             menuButton.heightAnchor.constraint(equalToConstant: 80),
             menuButton.widthAnchor.constraint(equalToConstant: 80),
-
+            
             stakeButtonLeftConstraint,
             stakeButtonBottomConstraint,
             stakeButton.heightAnchor.constraint(equalToConstant: topButtonsSize),
