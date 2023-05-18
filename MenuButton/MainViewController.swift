@@ -137,31 +137,47 @@ private extension MainViewController {
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(menuButtonLongPressed(_:)))
         longPressGesture.minimumPressDuration = 0.2
         menuButton.addGestureRecognizer(longPressGesture)
+        
+        let gesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
+        gesture.delegate = self
+        menuButton.addGestureRecognizer(gesture)
+    }
+}
+
+//MARK: - UIGestureRecognizerDelegate
+extension MainViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
     }
 }
 
 //MARK: - Actions
 private extension MainViewController {
-    func setupButtons(isMenuButtonExpanded: Bool) {
-        if isMenuButtonExpanded {
-            UIImpactFeedbackGenerator(style: .heavy).impactOccurred(intensity: 1)
-            self.translucentView.alpha = 1
-            self.stakeButton.alpha = 1
-            self.sendButton.alpha = 1
-            self.recieveButton.alpha = 1
-            self.supplyButton.alpha = 1
-            self.borrowButton.alpha = 1
-            self.setupButtonsDynamicConstraints(isBegan: true)
-        } else {
-            self.translucentView.alpha = 0
-            self.setupButtonsDynamicConstraints(isBegan: false)
-            self.stakeButton.alpha = 0
-            self.sendButton.alpha = 0
-            self.recieveButton.alpha = 0
-            self.supplyButton.alpha = 0
-            self.borrowButton.alpha = 0
+    @objc func handlePanGesture(_ sender: UIPanGestureRecognizer) {
+        switch sender.state {
+        case .began, .changed:
+            let buttons = [stakeButton, sendButton, recieveButton, supplyButton, borrowButton]
+            for button in buttons {
+                let scale: CGFloat = 1.6
+                let isButtonTapped = button.frame.contains(sender.location(in: view))
+                button.transform = CGAffineTransform(scaleX: isButtonTapped ? scale : 1.0, y: isButtonTapped ? scale : 1.0)
+            }
+        case .ended, .cancelled, .failed:
+            UIView.animate(withDuration: 0.3) {
+                let normalScale: CGFloat = 1.0
+                let buttons = [self.menuButton, self.stakeButton, self.sendButton, self.recieveButton, self.supplyButton, self.borrowButton]
+                
+                for button in buttons {
+                    button.transform = CGAffineTransform(scaleX: normalScale, y: normalScale)
+                }
+            }
+        default:
+            break
         }
     }
+    
+    
+    
     @objc func menuButtonTapped() {
         isButtonsAppeared.toggle()
         if isButtonsAppeared {
@@ -203,7 +219,28 @@ private extension MainViewController {
         }
     }
     
-    private func setupButtonsDynamicConstraints(isBegan: Bool) {
+    func setupButtons(isMenuButtonExpanded: Bool) {
+        if isMenuButtonExpanded {
+            UIImpactFeedbackGenerator(style: .heavy).impactOccurred(intensity: 1)
+            self.translucentView.alpha = 1
+            self.stakeButton.alpha = 1
+            self.sendButton.alpha = 1
+            self.recieveButton.alpha = 1
+            self.supplyButton.alpha = 1
+            self.borrowButton.alpha = 1
+            self.setupButtonsDynamicConstraints(isBegan: true)
+        } else {
+            self.translucentView.alpha = 0
+            self.setupButtonsDynamicConstraints(isBegan: false)
+            self.stakeButton.alpha = 0
+            self.sendButton.alpha = 0
+            self.recieveButton.alpha = 0
+            self.supplyButton.alpha = 0
+            self.borrowButton.alpha = 0
+        }
+    }
+    
+    func setupButtonsDynamicConstraints(isBegan: Bool) {
         if isBegan {
             stakeButtonBottomConstraint.constant = -90
             stakeButtonLeftConstraint.constant = 24
