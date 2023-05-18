@@ -9,6 +9,13 @@ import UIKit
 
 class MainViewController: UIViewController {
     //MARK: - Views
+    private lazy var mockBackImageView: UIImageView = {
+        let imageView = UIImageView()
+        let image = UIImage(named: "mockBackView")
+        imageView.image = image
+        return imageView
+    }()
+    
     private lazy var translucentView: UIVisualEffectView = {
         let blurEffect = UIBlurEffect(style: .regular)
         let view = UIVisualEffectView(effect: blurEffect)
@@ -16,23 +23,14 @@ class MainViewController: UIViewController {
         return view
     }()
     
-    private lazy var testBackgroundText: UILabel = {
-        let label = UILabel()
-        label.text = "This is the test label for testing blur view effect"
-        label.font = UIFont.systemFont(ofSize: 50)
-        label.numberOfLines = 0
-        label.textColor = .blue
-        return label
-    }()
-    
     private lazy var menuButton: UIButton = {
         let button = UIButton()
         let buttonImage = UIImage(named: "menuButton")
         button.setImage(buttonImage, for: .normal)
         button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.4
+        button.layer.shadowOpacity = 0.6
         button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 30
+        button.layer.shadowRadius = 35
         button.layer.masksToBounds = false
         return button
     }()
@@ -40,65 +38,65 @@ class MainViewController: UIViewController {
     //MARK: - Five Menu Buttons
     private lazy var stakeButton: UIButton = {
         let button = UIButton()
-        let buttonImage = UIImage(named: "menuButton")
+        let buttonImage = UIImage(named: "stakeLogo")
         button.setImage(buttonImage, for: .normal)
         button.alpha = 0
         button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.4
+        button.layer.shadowOpacity = 0.5
         button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 10
+        button.layer.shadowRadius = 13
         button.layer.masksToBounds = false
         return button
     }()
     
     private lazy var sendButton: UIButton = {
         let button = UIButton()
-        let buttonImage = UIImage(named: "menuButton")
+        let buttonImage = UIImage(named: "sendLogo")
         button.setImage(buttonImage, for: .normal)
         button.alpha = 0
         button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.4
+        button.layer.shadowOpacity = 0.5
         button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 10
+        button.layer.shadowRadius = 13
         button.layer.masksToBounds = false
         return button
     }()
     
     private lazy var recieveButton: UIButton = {
         let button = UIButton()
-        let buttonImage = UIImage(named: "menuButton")
+        let buttonImage = UIImage(named: "receiveLogo")
         button.setImage(buttonImage, for: .normal)
         button.alpha = 0
         button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.4
+        button.layer.shadowOpacity = 0.5
         button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 10
+        button.layer.shadowRadius = 13
         button.layer.masksToBounds = false
         return button
     }()
     
     private lazy var supplyButton: UIButton = {
         let button = UIButton()
-        let buttonImage = UIImage(named: "menuButton")
+        let buttonImage = UIImage(named: "supplyLogo")
         button.setImage(buttonImage, for: .normal)
         button.alpha = 0
         button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.4
+        button.layer.shadowOpacity = 0.5
         button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 10
+        button.layer.shadowRadius = 13
         button.layer.masksToBounds = false
         return button
     }()
     
     private lazy var borrowButton: UIButton = {
         let button = UIButton()
-        let buttonImage = UIImage(named: "menuButton")
+        let buttonImage = UIImage(named: "borrowLogo")
         button.setImage(buttonImage, for: .normal)
         button.alpha = 0
         button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.4
+        button.layer.shadowOpacity = 0.5
         button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 10
+        button.layer.shadowRadius = 13
         button.layer.masksToBounds = false
         return button
     }()
@@ -121,6 +119,7 @@ class MainViewController: UIViewController {
     //MARK: - Private Properties
     private let centerX = UIScreen.main.bounds.width / 2
     private var isButtonsAppeared = false
+    private var lastButton: UIButton?
     
     //MARK: - Lifecycle Methods
     override func viewDidLoad() {
@@ -154,23 +153,40 @@ extension MainViewController: UIGestureRecognizerDelegate {
 //MARK: - Actions
 private extension MainViewController {
     @objc func handlePanGesture(_ sender: UIPanGestureRecognizer) {
+        let buttons = [stakeButton, sendButton, recieveButton, supplyButton, borrowButton]
+        let scale: CGFloat = 1.6
         switch sender.state {
         case .began, .changed:
-            let buttons = [stakeButton, sendButton, recieveButton, supplyButton, borrowButton]
+            let location = sender.location(in: view)
             for button in buttons {
-                let scale: CGFloat = 1.6
-                let isButtonTapped = button.frame.contains(sender.location(in: view))
-                button.transform = CGAffineTransform(scaleX: isButtonTapped ? scale : 1.0, y: isButtonTapped ? scale : 1.0)
-            }
-        case .ended, .cancelled, .failed:
-            UIView.animate(withDuration: 0.3) {
-                let normalScale: CGFloat = 1.0
-                let buttons = [self.menuButton, self.stakeButton, self.sendButton, self.recieveButton, self.supplyButton, self.borrowButton]
-                
-                for button in buttons {
-                    button.transform = CGAffineTransform(scaleX: normalScale, y: normalScale)
+                if button.frame.contains(location) {
+                    if lastButton != button {
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred(intensity: 1)
+                        lastButton = button
+                    }
+                    let translateTransform: CGAffineTransform
+                    if button == stakeButton {
+                        translateTransform = CGAffineTransform(translationX: -button.bounds.width * (1 - 1/scale) / 2, y: -button.bounds.height * (1 - 1/scale))
+                    } else if button == borrowButton {
+                        translateTransform = CGAffineTransform(translationX: button.bounds.width * (1 - 1/scale) / 2, y: -button.bounds.height * (1 - 1/scale))
+                    } else {
+                        translateTransform = CGAffineTransform(translationX: 0, y: -button.bounds.height * (1 - 1/scale))
+                    }
+                    UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.3) {
+                        button.transform = CGAffineTransform(scaleX: scale, y: scale).concatenating(translateTransform)
+                    }
+                    
+                } else {
+                    button.transform = CGAffineTransform.identity
                 }
             }
+        case .ended, .cancelled, .failed:
+            UIView.animate(withDuration: 0.6) {
+                for button in buttons {
+                    button.transform = CGAffineTransform.identity
+                }
+            }
+            lastButton = nil
         default:
             break
         }
@@ -185,7 +201,7 @@ private extension MainViewController {
                 self.setupButtons(isMenuButtonExpanded: self.isButtonsAppeared)
                 self.menuButton.alpha = 1
             }
-            let expandedButtonImage = UIImage(named: "menuButtonShadow")
+            let expandedButtonImage = UIImage(named: "closeButton")
             menuButton.setImage(expandedButtonImage, for: .normal)
         } else {
             UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.3) {
@@ -221,7 +237,7 @@ private extension MainViewController {
     
     func setupButtons(isMenuButtonExpanded: Bool) {
         if isMenuButtonExpanded {
-            UIImpactFeedbackGenerator(style: .heavy).impactOccurred(intensity: 1)
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred(intensity: 1)
             self.translucentView.alpha = 1
             self.stakeButton.alpha = 1
             self.sendButton.alpha = 1
@@ -243,14 +259,14 @@ private extension MainViewController {
     func setupButtonsDynamicConstraints(isBegan: Bool) {
         if isBegan {
             stakeButtonBottomConstraint.constant = -90
-            stakeButtonLeftConstraint.constant = 24
+            stakeButtonLeftConstraint.constant = 35
             sendButtonBottomConstraint.constant = -110
-            sendButtonLeftConstraint.constant = 100
+            sendButtonLeftConstraint.constant = 105
             recieveButtonBottomConstraint.constant = -120
             supplyButtonBottomConstraint.constant = -110
-            supplyButtonRightConstraint.constant = -100
+            supplyButtonRightConstraint.constant = -105
             borrowButtonBottomConstraint.constant = -90
-            borrowButtonRightConstraint.constant = -24
+            borrowButtonRightConstraint.constant = -35
         } else {
             stakeButtonBottomConstraint.constant = -30
             stakeButtonLeftConstraint.constant = centerX
@@ -283,23 +299,25 @@ private extension MainViewController {
 private extension MainViewController {
     func setupUI() {
         view.backgroundColor = .white
-        view.addAutolayoutSubviews(testBackgroundText,
-                                   translucentView,
-                                   menuButton,
-                                   stakeButton,
-                                   sendButton,
-                                   recieveButton,
-                                   supplyButton,
-                                   borrowButton)
+        view.addAutolayoutSubviews(
+            mockBackImageView,
+            translucentView,
+            menuButton,
+            stakeButton,
+            sendButton,
+            recieveButton,
+            supplyButton,
+            borrowButton)
         setupConstraints()
     }
     
     func setupConstraints() {
         let topButtonsSize: CGFloat = 55
         NSLayoutConstraint.activate([
-            testBackgroundText.topAnchor.constraint(equalTo: view.topAnchor, constant: 200),
-            testBackgroundText.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 100),
-            testBackgroundText.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -100),
+            mockBackImageView.topAnchor.constraint(equalTo: view.topAnchor),
+            mockBackImageView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            mockBackImageView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            mockBackImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             translucentView.topAnchor.constraint(equalTo: view.topAnchor),
             translucentView.leftAnchor.constraint(equalTo: view.leftAnchor),
