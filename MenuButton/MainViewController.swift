@@ -23,6 +23,20 @@ class MainViewController: UIViewController {
         return view
     }()
     
+    private lazy var infoLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.textColor = .white
+        label.font = UIFont.boldSystemFont(ofSize: 26)
+        label.alpha = 0
+        label.layer.shadowColor = UIColor.black.cgColor
+        label.layer.shadowOpacity = 0.2
+        label.layer.shadowOffset = CGSize(width: 0, height: 1)
+        label.layer.shadowRadius = 2
+        label.layer.masksToBounds = false
+        return label
+    }()
+    
     private lazy var menuButton: UIButton = {
         let button = UIButton()
         let buttonImage = UIImage(named: "menuButton")
@@ -158,11 +172,15 @@ private extension MainViewController {
         switch sender.state {
         case .began, .changed:
             let location = sender.location(in: view)
-            for button in buttons {
+            for (index, button) in buttons.enumerated() {
                 if button.frame.contains(location) {
                     if lastButton != button {
                         UIImpactFeedbackGenerator(style: .medium).impactOccurred(intensity: 1)
                         lastButton = button
+                        UIView.animate(withDuration: 0.3) {
+                            self.infoLabel.alpha = 1
+                            self.setButtonTitle(for: index)
+                        }
                     }
                     let translateTransform: CGAffineTransform
                     if button == stakeButton {
@@ -185,6 +203,9 @@ private extension MainViewController {
                 for button in buttons {
                     button.transform = CGAffineTransform.identity
                 }
+            }
+            UIView.animate(withDuration: 0.1) {
+                self.infoLabel.alpha = 0
             }
             lastButton = nil
         default:
@@ -230,6 +251,23 @@ private extension MainViewController {
             UIView.animate(withDuration: 0.2) {
                 self.menuButton.alpha = 1
             }
+        default:
+            break
+        }
+    }
+    
+    func setButtonTitle(for index: Int) {
+        switch index {
+        case 0:
+            self.infoLabel.text = "Stake"
+        case 1:
+            self.infoLabel.text = "Send"
+        case 2:
+            self.infoLabel.text = "Receive"
+        case 3:
+            self.infoLabel.text = "Supply"
+        case 4:
+            self.infoLabel.text = "Borrow"
         default:
             break
         }
@@ -302,6 +340,7 @@ private extension MainViewController {
         view.addAutolayoutSubviews(
             mockBackImageView,
             translucentView,
+            infoLabel,
             menuButton,
             stakeButton,
             sendButton,
@@ -328,6 +367,9 @@ private extension MainViewController {
             menuButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30),
             menuButton.heightAnchor.constraint(equalToConstant: 80),
             menuButton.widthAnchor.constraint(equalToConstant: 80),
+            
+            infoLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            infoLabel.bottomAnchor.constraint(equalTo: recieveButton.topAnchor, constant: -50),
             
             stakeButtonLeftConstraint,
             stakeButtonBottomConstraint,
