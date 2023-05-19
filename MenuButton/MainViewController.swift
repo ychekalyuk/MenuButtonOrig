@@ -26,7 +26,7 @@ class MainViewController: UIViewController {
     private lazy var infoLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.textColor = .white
+        label.textColor = .gray
         label.font = UIFont.boldSystemFont(ofSize: 26)
         label.alpha = 0
         label.layer.shadowColor = UIColor.black.cgColor
@@ -134,6 +134,9 @@ class MainViewController: UIViewController {
     private let centerX = UIScreen.main.bounds.width / 2
     private var isButtonsAppeared = false
     private var lastButton: UIButton?
+    private var isItMenuButtonLongTap = false
+    private var isItFirstTap = true
+    private var menuButtonLabels: [UILabel] = []
     
     //MARK: - Lifecycle Methods
     override func viewDidLoad() {
@@ -154,6 +157,20 @@ private extension MainViewController {
         let gesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
         gesture.delegate = self
         menuButton.addGestureRecognizer(gesture)
+        
+        
+        let buttons = [stakeButton, sendButton, recieveButton, supplyButton, borrowButton]
+        buttons.forEach { button in
+            let smallTopButton = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
+            smallTopButton.delegate = self
+            button.addGestureRecognizer(smallTopButton)
+            
+            let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
+            
+            longPressGesture.minimumPressDuration = 0.2
+            button.addGestureRecognizer(longPressGesture)
+        }
+        
     }
 }
 
@@ -179,7 +196,11 @@ private extension MainViewController {
                         lastButton = button
                         UIView.animate(withDuration: 0.3) {
                             self.infoLabel.alpha = 1
-                            self.setButtonTitle(for: index)
+                            self.infoLabel.text = self.getButtonTitle(for: index)
+                            for label in self.menuButtonLabels {
+                                label.removeFromSuperview()
+                            }
+                            self.menuButtonLabels.removeAll()
                         }
                     }
                     let translateTransform: CGAffineTransform
@@ -216,6 +237,40 @@ private extension MainViewController {
     
     
     @objc func menuButtonTapped() {
+        
+        
+        if !isItMenuButtonLongTap {
+            if isItFirstTap {
+                let buttons = [stakeButton, sendButton, recieveButton, supplyButton, borrowButton]
+                for (index, button) in buttons.enumerated() {
+                    let label = UILabel()
+                    label.text = getButtonTitle(for: index)
+                    label.textColor = .gray
+                    label.font = UIFont.boldSystemFont(ofSize: 15)
+                    label.layer.shadowColor = UIColor.black.cgColor
+                    label.layer.shadowOpacity = 0.2
+                    label.layer.shadowOffset = CGSize(width: 0, height: 1)
+                    label.layer.shadowRadius = 2
+                    label.layer.masksToBounds = false
+                    view.addAutolayoutSubview(label)
+                    NSLayoutConstraint.activate([
+                        label.centerXAnchor.constraint(equalTo: button.centerXAnchor),
+                        label.bottomAnchor.constraint(equalTo: button.topAnchor, constant: -10)
+                    ])
+                    menuButtonLabels.append(label)
+                    isItFirstTap.toggle()
+                }
+            } else {
+                for label in menuButtonLabels {
+                    label.removeFromSuperview()
+                }
+                menuButtonLabels.removeAll()
+                isItFirstTap.toggle()
+            }
+            
+        }
+        
+        
         isButtonsAppeared.toggle()
         if isButtonsAppeared {
             UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.3) {
@@ -236,6 +291,7 @@ private extension MainViewController {
     @objc func menuButtonLongPressed(_ sender: UILongPressGestureRecognizer) {
         switch sender.state {
         case .began:
+            isItMenuButtonLongTap.toggle()
             UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.3) {
                 UIImpactFeedbackGenerator(style: .heavy).impactOccurred(intensity: 1)
                 self.setupButtons(isMenuButtonExpanded: true)
@@ -244,6 +300,7 @@ private extension MainViewController {
                 self.menuButton.alpha = 0
             }
         case .ended:
+            isItMenuButtonLongTap.toggle()
             UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.3) {
                 self.setupButtons(isMenuButtonExpanded: false)
                 
@@ -256,21 +313,23 @@ private extension MainViewController {
         }
     }
     
-    func setButtonTitle(for index: Int) {
+    func getButtonTitle(for index: Int) -> String {
+        var title = ""
         switch index {
         case 0:
-            self.infoLabel.text = "Stake"
+            title = "Stake"
         case 1:
-            self.infoLabel.text = "Send"
+            title = "Send"
         case 2:
-            self.infoLabel.text = "Receive"
+            title = "Receive"
         case 3:
-            self.infoLabel.text = "Supply"
+            title = "Supply"
         case 4:
-            self.infoLabel.text = "Borrow"
+            title = "Borrow"
         default:
             break
         }
+        return title
     }
     
     func setupButtons(isMenuButtonExpanded: Bool) {
