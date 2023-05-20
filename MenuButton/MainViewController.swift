@@ -206,6 +206,7 @@ private extension MainViewController {
     }
     
     @objc func menuButtonLongPressed(_ sender: UILongPressGestureRecognizer) {
+        guard isItFirstTap else { return }
         switch sender.state {
         case .began:
             isItMenuButtonLongTap.toggle()
