@@ -245,20 +245,12 @@ private extension MainViewController {
     }
     
     func getButtonTitle(for index: Int) -> String {
-        switch index {
-        case 0:
-            return MenuButtonType.stake.rawValue
-        case 1:
-            return MenuButtonType.send.rawValue
-        case 2:
-            return MenuButtonType.receive.rawValue
-        case 3:
-            return MenuButtonType.supply.rawValue
-        case 4:
-            return MenuButtonType.borrow.rawValue
-        default:
-            return ""
-        }
+        let buttonTitles = [0: MenuButtonType.stake.rawValue,
+                            1: MenuButtonType.send.rawValue,
+                            2: MenuButtonType.receive.rawValue,
+                            3: MenuButtonType.supply.rawValue,
+                            4: MenuButtonType.borrow.rawValue]
+        return buttonTitles[index] ?? ""
     }
     
     func setupButtons(isMenuButtonExpanded: Bool) {
@@ -273,27 +265,15 @@ private extension MainViewController {
     }
     
     func setupButtonsDynamicConstraints(isBegan: Bool) {
-        if isBegan {
-            stakeButtonBottomConstraint.constant = -90
-            stakeButtonLeftConstraint.constant = 35
-            sendButtonBottomConstraint.constant = -110
-            sendButtonLeftConstraint.constant = 105
-            recieveButtonBottomConstraint.constant = -120
-            supplyButtonBottomConstraint.constant = -110
-            supplyButtonRightConstraint.constant = -105
-            borrowButtonBottomConstraint.constant = -90
-            borrowButtonRightConstraint.constant = -35
-        } else {
-            stakeButtonBottomConstraint.constant = -30
-            stakeButtonLeftConstraint.constant = centerX
-            sendButtonBottomConstraint.constant = -30
-            sendButtonLeftConstraint.constant = centerX
-            recieveButtonBottomConstraint.constant = -30
-            supplyButtonBottomConstraint.constant = -30
-            supplyButtonRightConstraint.constant = -centerX
-            borrowButtonBottomConstraint.constant = -30
-            borrowButtonRightConstraint.constant = -centerX
-        }
+            stakeButtonBottomConstraint.constant = isBegan ? -90 : -30
+            stakeButtonLeftConstraint.constant = isBegan ? 35: centerX
+            sendButtonBottomConstraint.constant = isBegan ? -110: -30
+            sendButtonLeftConstraint.constant = isBegan ? 105: centerX
+            recieveButtonBottomConstraint.constant = isBegan ? -120 : -30
+            supplyButtonBottomConstraint.constant = isBegan ? -110 : -30
+            supplyButtonRightConstraint.constant = isBegan ? -105 : -centerX
+            borrowButtonBottomConstraint.constant = isBegan ? -90 : -30
+            borrowButtonRightConstraint.constant = isBegan ? -35: -centerX
         
         UIView.animate(withDuration: 0.6) {
             let buttons = [self.stakeButton, self.sendButton, self.recieveButton, self.supplyButton, self.borrowButton]
