@@ -38,80 +38,32 @@ class MainViewController: UIViewController {
     }()
     
     private lazy var menuButton: UIButton = {
-        let button = UIButton()
-        let buttonImage = UIImage(named: "menuButton")
-        button.setImage(buttonImage, for: .normal)
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.6
-        button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 35
-        button.layer.masksToBounds = false
+        let button = UIButton(type: .menu)
         return button
     }()
     
-    //MARK: - Five Menu Buttons
     private lazy var stakeButton: UIButton = {
-        let button = UIButton()
-        let buttonImage = UIImage(named: "stakeLogo")
-        button.setImage(buttonImage, for: .normal)
-        button.alpha = 0
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.5
-        button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 13
-        button.layer.masksToBounds = false
+        let button = UIButton(type: .stake)
         return button
     }()
     
     private lazy var sendButton: UIButton = {
-        let button = UIButton()
-        let buttonImage = UIImage(named: "sendLogo")
-        button.setImage(buttonImage, for: .normal)
-        button.alpha = 0
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.5
-        button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 13
-        button.layer.masksToBounds = false
+        let button = UIButton(type: .send)
         return button
     }()
     
     private lazy var recieveButton: UIButton = {
-        let button = UIButton()
-        let buttonImage = UIImage(named: "receiveLogo")
-        button.setImage(buttonImage, for: .normal)
-        button.alpha = 0
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.5
-        button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 13
-        button.layer.masksToBounds = false
+        let button = UIButton(type: .receive)
         return button
     }()
     
     private lazy var supplyButton: UIButton = {
-        let button = UIButton()
-        let buttonImage = UIImage(named: "supplyLogo")
-        button.setImage(buttonImage, for: .normal)
-        button.alpha = 0
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.5
-        button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 13
-        button.layer.masksToBounds = false
+        let button = UIButton(type: .supply)
         return button
     }()
     
     private lazy var borrowButton: UIButton = {
-        let button = UIButton()
-        let buttonImage = UIImage(named: "borrowLogo")
-        button.setImage(buttonImage, for: .normal)
-        button.alpha = 0
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.5
-        button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 13
-        button.layer.masksToBounds = false
+        let button = UIButton(type: .borrow)
         return button
     }()
     
@@ -237,8 +189,6 @@ private extension MainViewController {
     
     
     @objc func menuButtonTapped() {
-        
-        
         if !isItMenuButtonLongTap {
             if isItFirstTap {
                 let buttons = [stakeButton, sendButton, recieveButton, supplyButton, borrowButton]
@@ -267,9 +217,7 @@ private extension MainViewController {
                 menuButtonLabels.removeAll()
                 isItFirstTap.toggle()
             }
-            
         }
-        
         
         isButtonsAppeared.toggle()
         if isButtonsAppeared {
@@ -314,22 +262,20 @@ private extension MainViewController {
     }
     
     func getButtonTitle(for index: Int) -> String {
-        var title = ""
         switch index {
         case 0:
-            title = "Stake"
+            return MenuButtonType.stake.rawValue
         case 1:
-            title = "Send"
+            return MenuButtonType.send.rawValue
         case 2:
-            title = "Receive"
+            return MenuButtonType.receive.rawValue
         case 3:
-            title = "Supply"
+            return MenuButtonType.supply.rawValue
         case 4:
-            title = "Borrow"
+            return MenuButtonType.borrow.rawValue
         default:
-            break
+            return ""
         }
-        return title
     }
     
     func setupButtons(isMenuButtonExpanded: Bool) {

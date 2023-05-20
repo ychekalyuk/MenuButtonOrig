@@ -5,59 +5,44 @@
 //  Created by Юрий Альт on 19.05.2023.
 //
 
-import UIKit
+import UIKit.UIButton
 
-class SmallTopButton: UIView {
+enum MenuButtonType: String {
+    case stake = "Stake"
+    case send = "Send"
+    case receive = "Receive"
+    case supply = "Supply"
+    case borrow = "Borrow"
+    case menu
     
-    lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "test"
-        label.textColor = .gray
-        label.font = UIFont.systemFont(ofSize: 20)
-        return label
-    }()
-    
-    private lazy var smallButton: UIButton = {
-        let button = UIButton()
-        let buttonImage = UIImage(named: "supplyLogo")
-        button.setImage(buttonImage, for: .normal)
-        button.alpha = 1
-        button.layer.shadowColor = UIColor.black.cgColor
-        button.layer.shadowOpacity = 0.5
-        button.layer.shadowOffset = CGSize(width: 0, height: 2)
-        button.layer.shadowRadius = 13
-        button.layer.masksToBounds = false
-        return button
-    }()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupUI()
-    }
-    
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    var imageName: String {
+        switch self {
+        case .menu:
+            return "menuButton"
+        case .stake:
+            return "stakeLogo"
+        case .send:
+            return "sendLogo"
+        case .receive:
+            return "receiveLogo"
+        case .supply:
+            return "supplyLogo"
+        case .borrow:
+            return "borrowLogo"
+        }
     }
 }
 
-private extension SmallTopButton {
-    func setupUI() {
-        addAutolayoutSubviews(titleLabel, smallButton)
-        setupConstraints()
-    }
-    
-    func setupConstraints() {
-        NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: topAnchor),
-            titleLabel.leftAnchor.constraint(equalTo: leftAnchor),
-            titleLabel.rightAnchor.constraint(equalTo: rightAnchor),
-            
-            smallButton.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10),
-            smallButton.centerXAnchor.constraint(equalTo: centerXAnchor),
-            smallButton.bottomAnchor.constraint(equalTo: bottomAnchor),
-            smallButton.widthAnchor.constraint(equalToConstant: 55),
-            smallButton.heightAnchor.constraint(equalToConstant: 55)
-        ])
+extension UIButton {
+    convenience init(type: MenuButtonType) {
+        self.init()
+        let buttonImage = UIImage(named: type.imageName)
+        setImage(buttonImage, for: .normal)
+        alpha = type == .menu ? 1 : 0
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = type == .menu ? 0.6 : 0.5
+        layer.shadowOffset = CGSize(width: 0, height: 2)
+        layer.shadowRadius = type == .menu ? 35 : 13
+        layer.masksToBounds = false
     }
 }
