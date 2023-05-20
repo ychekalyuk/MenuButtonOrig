@@ -68,7 +68,6 @@ class MainViewController: UIViewController {
     }()
     
     //MARK: - Constraints
-    
     private lazy var stakeButtonLeftConstraint = stakeButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: centerX)
     private lazy var stakeButtonBottomConstraint = stakeButton.bottomAnchor.constraint(equalTo: view.bottomAnchor,
                                                                                        constant: -30)
@@ -106,29 +105,26 @@ private extension MainViewController {
         longPressGesture.minimumPressDuration = 0.2
         menuButton.addGestureRecognizer(longPressGesture)
         
-        let gesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
-        gesture.delegate = self
-        menuButton.addGestureRecognizer(gesture)
-        
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
+        panGesture.delegate = self
+        menuButton.addGestureRecognizer(panGesture)
         
         let buttons = [stakeButton, sendButton, recieveButton, supplyButton, borrowButton]
         buttons.forEach { button in
             let smallTopButton = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
             smallTopButton.delegate = self
             button.addGestureRecognizer(smallTopButton)
-            
             let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
-            
             longPressGesture.minimumPressDuration = 0.2
             button.addGestureRecognizer(longPressGesture)
         }
-        
     }
 }
 
 //MARK: - UIGestureRecognizerDelegate
 extension MainViewController: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                           shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
 }
@@ -186,22 +182,12 @@ private extension MainViewController {
         }
     }
     
-    
-    
     @objc func menuButtonTapped() {
         if !isItMenuButtonLongTap {
             if isItFirstTap {
                 let buttons = [stakeButton, sendButton, recieveButton, supplyButton, borrowButton]
                 for (index, button) in buttons.enumerated() {
-                    let label = UILabel()
-                    label.text = getButtonTitle(for: index)
-                    label.textColor = .gray
-                    label.font = UIFont.boldSystemFont(ofSize: 15)
-                    label.layer.shadowColor = UIColor.black.cgColor
-                    label.layer.shadowOpacity = 0.2
-                    label.layer.shadowOffset = CGSize(width: 0, height: 1)
-                    label.layer.shadowRadius = 2
-                    label.layer.masksToBounds = false
+                    let label = UILabel(text: getButtonTitle(for: index))
                     view.addAutolayoutSubview(label)
                     NSLayoutConstraint.activate([
                         label.centerXAnchor.constraint(equalTo: button.centerXAnchor),
@@ -281,21 +267,11 @@ private extension MainViewController {
     func setupButtons(isMenuButtonExpanded: Bool) {
         if isMenuButtonExpanded {
             UIImpactFeedbackGenerator(style: .medium).impactOccurred(intensity: 1)
-            self.translucentView.alpha = 1
-            self.stakeButton.alpha = 1
-            self.sendButton.alpha = 1
-            self.recieveButton.alpha = 1
-            self.supplyButton.alpha = 1
-            self.borrowButton.alpha = 1
+            [translucentView, stakeButton, sendButton, recieveButton, supplyButton, borrowButton].forEach { $0.alpha = 1 }
             self.setupButtonsDynamicConstraints(isBegan: true)
         } else {
-            self.translucentView.alpha = 0
+            [translucentView, stakeButton, sendButton, recieveButton, supplyButton, borrowButton].forEach { $0.alpha = 0 }
             self.setupButtonsDynamicConstraints(isBegan: false)
-            self.stakeButton.alpha = 0
-            self.sendButton.alpha = 0
-            self.recieveButton.alpha = 0
-            self.supplyButton.alpha = 0
-            self.borrowButton.alpha = 0
         }
     }
     
