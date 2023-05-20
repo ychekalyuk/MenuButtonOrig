@@ -8,12 +8,12 @@
 import UIKit.UIButton
 
 enum MenuButtonType: String {
+    case menu
     case stake = "Stake"
     case send = "Send"
     case receive = "Receive"
     case supply = "Supply"
     case borrow = "Borrow"
-    case menu
     
     var imageName: String {
         switch self {
