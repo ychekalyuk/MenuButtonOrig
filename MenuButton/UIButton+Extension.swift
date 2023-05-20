@@ -9,34 +9,17 @@ import UIKit.UIButton
 
 enum MenuButtonType: String {
     case menu
-    case stake = "Stake"
-    case send = "Send"
-    case receive = "Receive"
-    case supply = "Supply"
-    case borrow = "Borrow"
-    
-    var imageName: String {
-        switch self {
-        case .menu:
-            return "menuButton"
-        case .stake:
-            return "stakeLogo"
-        case .send:
-            return "sendLogo"
-        case .receive:
-            return "receiveLogo"
-        case .supply:
-            return "supplyLogo"
-        case .borrow:
-            return "borrowLogo"
-        }
-    }
+    case stake
+    case send
+    case receive
+    case supply
+    case borrow
 }
 
 extension UIButton {
     convenience init(type: MenuButtonType) {
         self.init()
-        let buttonImage = UIImage(named: type.imageName)
+        let buttonImage = UIImage(named: String(describing: type))
         setImage(buttonImage, for: .normal)
         alpha = type == .menu ? 1 : 0
         layer.shadowColor = UIColor.black.cgColor

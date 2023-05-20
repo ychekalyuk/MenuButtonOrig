@@ -208,13 +208,13 @@ private extension MainViewController {
                 self.setupButtons(isMenuButtonExpanded: self.isButtonsAppeared)
                 self.menuButton.alpha = 1
             }
-            let expandedButtonImage = UIImage(named: "closeButton")
+            let expandedButtonImage = UIImage(named: "close")
             menuButton.setImage(expandedButtonImage, for: .normal)
         } else {
             UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.3) {
                 self.setupButtons(isMenuButtonExpanded: self.isButtonsAppeared)
             }
-            let normalButtonImage = UIImage(named: "menuButton")
+            let normalButtonImage = UIImage(named: "menu")
             menuButton.setImage(normalButtonImage, for: .normal)
         }
     }
@@ -245,11 +245,11 @@ private extension MainViewController {
     }
     
     func getButtonTitle(for index: Int) -> String {
-        let buttonTitles = [0: MenuButtonType.stake.rawValue,
-                            1: MenuButtonType.send.rawValue,
-                            2: MenuButtonType.receive.rawValue,
-                            3: MenuButtonType.supply.rawValue,
-                            4: MenuButtonType.borrow.rawValue]
+        let buttonTitles = [0: "Stake",
+                            1: "Send",
+                            2: "Receive",
+                            3: "Supply",
+                            4: "Borrow"]
         return buttonTitles[index] ?? ""
     }
     
