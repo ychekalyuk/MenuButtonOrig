@@ -108,7 +108,7 @@ private extension MainViewController {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
         panGesture.delegate = self
         menuButton.addGestureRecognizer(panGesture)
-    
+        
         [stakeButton, sendButton, recieveButton, supplyButton, borrowButton].forEach {
             let smallTopButton = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
             smallTopButton.delegate = self
@@ -184,8 +184,7 @@ private extension MainViewController {
     @objc func menuButtonTapped() {
         if !isItMenuButtonLongTap {
             if isItFirstTap {
-                let buttons = [stakeButton, sendButton, recieveButton, supplyButton, borrowButton]
-                for (index, button) in buttons.enumerated() {
+                for (index, button) in [stakeButton, sendButton, recieveButton, supplyButton, borrowButton].enumerated() {
                     let label = UILabel(text: getButtonTitle(for: index))
                     view.addAutolayoutSubview(label)
                     NSLayoutConstraint.activate([
@@ -203,20 +202,11 @@ private extension MainViewController {
         }
         
         isButtonsAppeared.toggle()
-        if isButtonsAppeared {
-            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.3) {
-                self.setupButtons(isMenuButtonExpanded: self.isButtonsAppeared)
-                self.menuButton.alpha = 1
-            }
-            let expandedButtonImage = UIImage(named: "close")
-            menuButton.setImage(expandedButtonImage, for: .normal)
-        } else {
-            UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.3) {
-                self.setupButtons(isMenuButtonExpanded: self.isButtonsAppeared)
-            }
-            let normalButtonImage = UIImage(named: "menu")
-            menuButton.setImage(normalButtonImage, for: .normal)
+        UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.3) {
+            self.setupButtons(isMenuButtonExpanded: self.isButtonsAppeared)
+            self.menuButton.alpha = 1
         }
+        menuButton.setImage(UIImage(named: isButtonsAppeared ? "close" : "menu"), for: .normal)
     }
     
     @objc func menuButtonLongPressed(_ sender: UILongPressGestureRecognizer) {
@@ -254,34 +244,25 @@ private extension MainViewController {
     }
     
     func setupButtons(isMenuButtonExpanded: Bool) {
-        if isMenuButtonExpanded {
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred(intensity: 1)
-            [translucentView, stakeButton, sendButton, recieveButton, supplyButton, borrowButton].forEach { $0.alpha = 1 }
-            self.setupButtonsDynamicConstraints(isBegan: true)
-        } else {
-            [translucentView, stakeButton, sendButton, recieveButton, supplyButton, borrowButton].forEach { $0.alpha = 0 }
-            self.setupButtonsDynamicConstraints(isBegan: false)
-        }
+        if isMenuButtonExpanded { UIImpactFeedbackGenerator(style: .medium).impactOccurred(intensity: 1) }
+        [translucentView, stakeButton, sendButton, recieveButton, supplyButton, borrowButton].forEach { $0.alpha = isMenuButtonExpanded ? 1 : 0 }
+        setupButtonsDynamicConstraints(isBegan: isMenuButtonExpanded)
     }
     
     func setupButtonsDynamicConstraints(isBegan: Bool) {
-            stakeButtonBottomConstraint.constant = isBegan ? -90 : -30
-            stakeButtonLeftConstraint.constant = isBegan ? 35: centerX
-            sendButtonBottomConstraint.constant = isBegan ? -110: -30
-            sendButtonLeftConstraint.constant = isBegan ? 105: centerX
-            recieveButtonBottomConstraint.constant = isBegan ? -120 : -30
-            supplyButtonBottomConstraint.constant = isBegan ? -110 : -30
-            supplyButtonRightConstraint.constant = isBegan ? -105 : -centerX
-            borrowButtonBottomConstraint.constant = isBegan ? -90 : -30
-            borrowButtonRightConstraint.constant = isBegan ? -35: -centerX
+        stakeButtonBottomConstraint.constant = isBegan ? -90 : -30
+        stakeButtonLeftConstraint.constant = isBegan ? 35: centerX
+        sendButtonBottomConstraint.constant = isBegan ? -110: -30
+        sendButtonLeftConstraint.constant = isBegan ? 105: centerX
+        recieveButtonBottomConstraint.constant = isBegan ? -120 : -30
+        supplyButtonBottomConstraint.constant = isBegan ? -110 : -30
+        supplyButtonRightConstraint.constant = isBegan ? -105 : -centerX
+        borrowButtonBottomConstraint.constant = isBegan ? -90 : -30
+        borrowButtonRightConstraint.constant = isBegan ? -35: -centerX
         
+        let buttons = [stakeButton, sendButton, recieveButton, supplyButton, borrowButton]
         UIView.animate(withDuration: 0.6) {
-            let buttons = [self.stakeButton, self.sendButton, self.recieveButton, self.supplyButton, self.borrowButton]
-            if isBegan {
-                buttons.forEach { $0.transform = CGAffineTransform(scaleX: 1.0, y: 1.0) }
-            } else {
-                buttons.forEach { $0.transform = CGAffineTransform(scaleX: 0.0, y: 0.0) }
-            }
+            buttons.forEach { $0.transform = CGAffineTransform(scaleX: isBegan ? 1.0 : 0.0, y: isBegan ? 1.0 : 0.0) }
             self.view.layoutIfNeeded()
         }
     }
@@ -352,4 +333,3 @@ private extension MainViewController {
         ])
     }
 }
-
