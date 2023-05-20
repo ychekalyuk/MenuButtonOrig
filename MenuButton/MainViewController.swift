@@ -144,9 +144,7 @@ private extension MainViewController {
                         UIView.animate(withDuration: 0.3) {
                             self.infoLabel.alpha = 1
                             self.infoLabel.text = self.getButtonTitle(for: index)
-                            for label in self.menuButtonLabels {
-                                label.removeFromSuperview()
-                            }
+                            self.menuButtonLabels.forEach { $0.removeFromSuperview() }
                             self.menuButtonLabels.removeAll()
                         }
                     }
@@ -168,9 +166,7 @@ private extension MainViewController {
             }
         case .ended, .cancelled, .failed:
             UIView.animate(withDuration: 0.6) {
-                for button in buttons {
-                    button.transform = CGAffineTransform.identity
-                }
+                buttons.forEach { $0.transform = CGAffineTransform.identity }
             }
             UIView.animate(withDuration: 0.1) {
                 self.infoLabel.alpha = 0
