@@ -135,9 +135,8 @@ private extension MainViewController {
         let scale: CGFloat = 1.6
         switch sender.state {
         case .began, .changed:
-            let location = sender.location(in: view)
             for (index, button) in buttons.enumerated() {
-                if button.frame.contains(location) {
+                if button.frame.contains(sender.location(in: view)) {
                     if lastButton != button {
                         UIImpactFeedbackGenerator(style: .medium).impactOccurred(intensity: 1)
                         lastButton = button
@@ -159,7 +158,6 @@ private extension MainViewController {
                     UIView.animate(withDuration: 0.6, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 0.3) {
                         button.transform = CGAffineTransform(scaleX: scale, y: scale).concatenating(translateTransform)
                     }
-                    
                 } else {
                     button.transform = CGAffineTransform.identity
                 }
