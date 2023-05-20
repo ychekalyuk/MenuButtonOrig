@@ -108,15 +108,14 @@ private extension MainViewController {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
         panGesture.delegate = self
         menuButton.addGestureRecognizer(panGesture)
-        
-        let buttons = [stakeButton, sendButton, recieveButton, supplyButton, borrowButton]
-        buttons.forEach { button in
+    
+        [stakeButton, sendButton, recieveButton, supplyButton, borrowButton].forEach {
             let smallTopButton = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
             smallTopButton.delegate = self
-            button.addGestureRecognizer(smallTopButton)
+            $0.addGestureRecognizer(smallTopButton)
             let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
             longPressGesture.minimumPressDuration = 0.2
-            button.addGestureRecognizer(longPressGesture)
+            $0.addGestureRecognizer(longPressGesture)
         }
     }
 }
@@ -197,9 +196,7 @@ private extension MainViewController {
                     isItFirstTap.toggle()
                 }
             } else {
-                for label in menuButtonLabels {
-                    label.removeFromSuperview()
-                }
+                menuButtonLabels.forEach { $0.removeFromSuperview() }
                 menuButtonLabels.removeAll()
                 isItFirstTap.toggle()
             }
@@ -301,13 +298,9 @@ private extension MainViewController {
         UIView.animate(withDuration: 0.6) {
             let buttons = [self.stakeButton, self.sendButton, self.recieveButton, self.supplyButton, self.borrowButton]
             if isBegan {
-                buttons.forEach { button in
-                    button.transform = CGAffineTransform(scaleX: 1.0, y: 1.0)
-                }
+                buttons.forEach { $0.transform = CGAffineTransform(scaleX: 1.0, y: 1.0) }
             } else {
-                buttons.forEach { button in
-                    button.transform = CGAffineTransform(scaleX: 0.0, y: 0.0)
-                }
+                buttons.forEach { $0.transform = CGAffineTransform(scaleX: 0.0, y: 0.0) }
             }
             self.view.layoutIfNeeded()
         }
